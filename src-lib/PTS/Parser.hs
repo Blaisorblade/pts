@@ -56,7 +56,7 @@ expr = term simple rec mkPos "expression" where
 
   rec = asum
     [ app mkApp simple
-    , arr (\a b -> mkPi (freshvar b (read "unused")) a b) arrow (expr )]
+    , arr (\a b -> mkPi (freshvar b (read "unused")) a b) arrow expr]
 
 unquote = char '$' *> asum
   [ var mkVar ident

@@ -47,7 +47,7 @@ var cons ident = cons <$> ident
 -- non-recursive syntax pattern: "constant"
 con cons constant = cons <$ constant
 
-withPos f p = setPos f <$> getPosition <*> p <*> getPosition where
+withPos f p = setPos f <$> getPosition <*> p <*> getPosition
 
 setPos f p1 x p2 = f (Position (sourceName p1) (sourceLine p1) (sourceLine p2) (sourceColumn p1) (pred $ sourceColumn p2)) x
 
