@@ -32,6 +32,11 @@ term simple rec pos msg = result where
   combine p = foldl' (\x (f, q) -> setPos pos p (f x) q)
 
 -- right-recursive syntax pattern: "lambda ident : qualifier . body"
+abs
+  :: (identT -> qualT -> bodyT -> r) ->
+    GenParser tok st unusedLambda -> GenParser tok st identT -> GenParser tok st unusedColon ->
+    GenParser tok st qualT -> GenParser tok st unusedDot -> GenParser tok st bodyT ->
+    GenParser tok st r
 abs cons lambda ident colon qualifier dot body
   = cons <$> try (lambda *> ident <* colon) <*> qualifier <*> (dot *> body)
 
