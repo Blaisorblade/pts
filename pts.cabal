@@ -54,6 +54,8 @@ Library
                        PTS.Binding,
                        PTS.Value
 
+  Ghc-options: -fprof-auto -fno-prof-count-entries -rtsopts
+
 Executable pts
   Hs-source-dirs:      src-exec
   Main-is:             pts.hs
@@ -64,6 +66,7 @@ Executable pts
                        transformers >= 0.2 && <0.4,
                        parsec == 3.1.*,
                        pts
+  Ghc-options: -fprof-auto -fno-prof-count-entries -rtsopts
 
   -- Build-tools:
 
