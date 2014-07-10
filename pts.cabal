@@ -47,6 +47,7 @@ Library
                        Tools.Errors,
                        Control.Monad.Log,
                        Control.Monad.Environment
+  Ghc-options: -fprof-auto -fno-prof-count-entries -rtsopts
 
 Executable pts
   Hs-source-dirs:      src-exec
@@ -58,6 +59,7 @@ Executable pts
                        transformers >= 0.2 && < 0.4,
                        parsec == 3.1.*,
                        pts
+  Ghc-options: -fprof-auto -fno-prof-count-entries -rtsopts
 
   -- Build-tools:
 
