@@ -132,7 +132,7 @@ mkUnquote t        =  mkTerm (Unquote t)
 
 handlePos f p t = annotatePos p $ mkPos p <$> f t
 
-typedHandlePos f p t = annotatePos p $ (\t -> MkTypedTerm (Pos p t) (typeOf t)) <$> f t
+typedHandlePos f p t = annotatePos p $ (\t -> let tt = typeOf t in tt `seq` MkTypedTerm (Pos p t) tt) <$> f t
 
 infixl 2 >>>
 (>>>) = flip (.)
