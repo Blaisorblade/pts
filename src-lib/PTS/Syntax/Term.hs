@@ -130,9 +130,11 @@ mkPi n t1 t2       =  mkTerm (Pi n t1 t2)
 mkPos p t          =  mkTerm (Pos p t)
 mkUnquote t        =  mkTerm (Unquote t)
 
+mkTypedPos p t     =  MkTypedTerm (Pos p t) (typeOf t)
+
 handlePos f p t = annotatePos p $ mkPos p <$> f t
 
-typedHandlePos f p t = annotatePos p $ (\t -> let tt = typeOf t in tt `seq` MkTypedTerm (Pos p t) tt) <$> f t
+typedHandlePos f p t = annotatePos p $ mkTypedPos p <$> f t
 
 infixl 2 >>>
 (>>>) = flip (.)
