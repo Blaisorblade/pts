@@ -47,6 +47,7 @@ Library
                        Tools.Errors,
                        Control.Monad.Log,
                        Control.Monad.Environment,
+                       Control.Monad.StricterWriter,
                        PTS.Module,
                        PTS.Binding,
                        PTS.Value
