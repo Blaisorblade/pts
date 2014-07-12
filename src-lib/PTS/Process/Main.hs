@@ -25,7 +25,11 @@ import System.IO (hPutStrLn, stderr, hFlush, stdout)
 infixl 2 >>>
 (>>>) = flip (.)
 
-main = parseCommandLine processJobs
+main = do
+  {- success <- runMainErrors $ -} parseCommandLine processJobs
+  {- if success
+    then exitSuccess
+    else exitFailure -}
 
 runMainErrors act = do
   result <- runErrorsT act
@@ -40,12 +44,7 @@ runMainErrors act = do
 runMainState act = evalStateT act []
 
 processJobs jobs = do
-  runMainState {- $ runMainErrors -} $ mapM_ processJob jobs
-  {-success <-
-  if success
-    then exitSuccess
-    else exitFailure
-  -}
+  runMainState $ mapM_ processJob jobs
 
 --MonadErrors [PTSError] m,
 processJob :: (Functor m, MonadIO m, MonadState [(Name, Binding M)] m) => (Options, FilePath) -> m ()

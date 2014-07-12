@@ -88,7 +88,11 @@ handleColumns  arg = case reads arg of
 
 handlePTS      arg = case find nameIn instances of
                        Just inst -> Global (setInstance inst)
-                       Nothing   -> Error  ("Error: Unknown pure type system instance " ++ arg)
+                       Nothing   -> Error $ show $ text "Error: Unknown pure type system instance" <+> text arg $$
+                                      text "" $$
+                                      supported $$
+                                      text "" $$
+                                      text "To learn more about the instances, run: pts --enumerate-instances"
                      where str = map toLower arg
                            nameIn = elem str . name
 
@@ -142,15 +146,17 @@ printHelp = putStrLn (usageInfo (render 80 header) options) where
     programName $$ supported $$ optionsText
   programName =
     text "PTS interpreter."
-  supported = fsep $ concat
-    [  [ text "Supported instances:"]
-    ,  punctuate (text ",")
-         [text (head (name i)) | i <- instances]
-    ,  map text $ words
-         "(and synonyms)"
-    ]
   optionsText =
     text "Options:"
+
+supported :: Doc
+supported = fsep $ concat
+  [  [ text "Supported instances:"]
+  ,  punctuate (text ",")
+       [text (head (name i)) | i <- instances]
+  ,  map text $ words
+       "(and synonyms)"
+  ]
 
 printInstances :: IO ()
 printInstances = putStrLn (render 80 info) where
