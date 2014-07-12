@@ -5,7 +5,7 @@ module Tools.Errors.Class
   ) where
 
 import Control.Monad.Error.Class
-import Control.Monad.Writer
+import Control.Monad.StricterWriter
 
 import Data.Monoid
 

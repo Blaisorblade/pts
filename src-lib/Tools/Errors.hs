@@ -5,7 +5,7 @@ module Tools.Errors
 import Control.Applicative
 import Control.Arrow (first)
 import Control.Monad.Error
-import Control.Monad.Writer
+import Control.Monad.StricterWriter
 import Control.Monad.Reader(ReaderT, mapReaderT)
 import Control.Monad.Reader.Class
 import Control.Monad.State (StateT (StateT), mapStateT)

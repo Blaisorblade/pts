@@ -7,7 +7,7 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Trans
 import Control.Monad.Log
-import Control.Monad.Writer
+import Control.Monad.StricterWriter
 
 import System.Environment
 import System.IO (hPutStrLn, stderr, hFlush, stdout)
