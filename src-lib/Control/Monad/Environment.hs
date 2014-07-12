@@ -17,7 +17,7 @@ import Control.Monad.Error (MonadError)
 import Control.Monad.Errors (MonadErrors)
 import Control.Monad.Log (MonadLog (..))
 import Control.Monad.Reader (MonadReader (ask, local), asks, ReaderT, runReaderT, mapReaderT)
-import Control.Monad.State (MonadState)
+import Control.Monad.State.Strict (MonadState)
 import Control.Monad.Trans (MonadTrans (lift), MonadIO)
 
 import Data.Maybe (Maybe)

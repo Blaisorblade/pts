@@ -4,7 +4,7 @@ module PTS.Process.Main where
 import Control.Monad.Assertions (checkAssertions)
 import Control.Monad.Errors
 import Control.Monad.Reader (runReaderT)
-import Control.Monad.State (MonadState, evalStateT)
+import Control.Monad.State.Strict (MonadState, evalStateT)
 import Control.Monad.Trans (MonadIO, liftIO)
 import Control.Monad.Log (runConsoleLogT)
 

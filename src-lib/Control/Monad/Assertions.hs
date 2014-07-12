@@ -19,7 +19,7 @@ import Control.Monad.Error (MonadError, catchError)
 import Control.Monad.Errors (MonadErrors (recover, annotate))
 import Control.Monad.Log (MonadLog, ConsoleLogT (ConsoleLogT))
 import Control.Monad.Reader (MonadReader, ReaderT, mapReaderT)
-import Control.Monad.State (MonadState, StateT (StateT))
+import Control.Monad.State.Strict (MonadState, StateT (StateT))
 import Control.Monad.Trans (MonadIO)
 import Control.Monad.Writer.Strict (MonadWriter, WriterT, runWriterT, tell, mapWriterT, censor)
 

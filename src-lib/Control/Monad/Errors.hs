@@ -9,7 +9,7 @@ import Control.Monad.Errors.Class
 import Control.Monad.Writer.Strict
 import Control.Monad.Reader(ReaderT, mapReaderT)
 import Control.Monad.Reader.Class
-import Control.Monad.State (StateT (StateT), mapStateT)
+import Control.Monad.State.Strict (StateT (StateT), mapStateT)
 import Control.Monad.State.Class
 
 instance (Monoid e, Error e, MonadErrors e m) => MonadErrors e (ReaderT r m) where

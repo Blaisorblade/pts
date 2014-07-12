@@ -2,7 +2,7 @@
 module PTS.Dynamics.Evaluation where
 
 import Control.Applicative hiding (Const)
-import Control.Monad.State
+import Control.Monad.State.Strict
 
 import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
