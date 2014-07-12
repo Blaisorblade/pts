@@ -15,7 +15,7 @@ import Control.Monad.State (StateT, evalStateT)
 import Control.Monad.State.Class (MonadState (get, put))
 import Control.Monad.Trans.Class (MonadTrans (lift))
 import Control.Monad.Writer.Class (MonadWriter)
-import Control.Monad.Writer (WriterT)
+import Control.Monad.Writer.Strict (WriterT)
 
 import Data.Bool (Bool (True, False))
 import Data.Function (($))

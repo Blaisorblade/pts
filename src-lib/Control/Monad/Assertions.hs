@@ -21,7 +21,7 @@ import Control.Monad.Log (MonadLog, ConsoleLogT (ConsoleLogT))
 import Control.Monad.Reader (MonadReader, ReaderT, mapReaderT)
 import Control.Monad.State (MonadState, StateT (StateT))
 import Control.Monad.Trans (MonadIO)
-import Control.Monad.Writer (MonadWriter, WriterT, runWriterT, tell, mapWriterT, censor)
+import Control.Monad.Writer.Strict (MonadWriter, WriterT, runWriterT, tell, mapWriterT, censor)
 
 import Data.Monoid (Monoid, mempty)
 

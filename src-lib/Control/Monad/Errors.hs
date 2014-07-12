@@ -6,7 +6,7 @@ import Control.Applicative
 import Control.Arrow (first)
 import Control.Monad.Error
 import Control.Monad.Errors.Class
-import Control.Monad.Writer
+import Control.Monad.Writer.Strict
 import Control.Monad.Reader(ReaderT, mapReaderT)
 import Control.Monad.Reader.Class
 import Control.Monad.State (StateT (StateT), mapStateT)

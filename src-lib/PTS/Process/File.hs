@@ -9,7 +9,7 @@ import Control.Monad.Reader (MonadReader (local), runReaderT, asks)
 import Control.Monad.State (MonadState, get, put, modify, evalStateT)
 import Control.Monad.Trans (MonadIO (liftIO))
 import Control.Monad.Log (MonadLog, runConsoleLogT)
-import Control.Monad.Writer (execWriterT, tell)
+import Control.Monad.Writer.Strict (execWriterT, tell)
 
 import Data.Monoid
 import Control.Monad.Writer.Class
