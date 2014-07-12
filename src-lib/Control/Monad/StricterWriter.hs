@@ -47,13 +47,11 @@ module Control.Monad.StricterWriter (
 
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
-import Data.Functor.Classes
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Fix
-import Control.Monad.Signatures
 import Data.Foldable (Foldable(foldMap))
 import Data.Monoid
 import Data.Traversable (Traversable(traverse))
@@ -98,23 +96,6 @@ mapWriter f = mapWriterT (Identity . f . runIdentity)
 -- The 'return' function produces the output 'mempty', while @>>=@
 -- combines the outputs of the subcomputations using 'mappend'.
 newtype WriterT w m a = WriterT { runWriterT :: m (a, w) }
-
-instance (Eq w, Eq1 m, Eq a) => Eq (WriterT w m a) where
-    WriterT x == WriterT y = eq1 x y
-
-instance (Ord w, Ord1 m, Ord a) => Ord (WriterT w m a) where
-    compare (WriterT x) (WriterT y) = compare1 x y
-
-instance (Read w, Read1 m, Read a) => Read (WriterT w m a) where
-    readsPrec = readsData $ readsUnary1 "WriterT" WriterT
-
-instance (Show w, Show1 m, Show a) => Show (WriterT w m a) where
-    showsPrec d (WriterT m) = showsUnary1 "WriterT" d m
-
-instance (Eq w, Eq1 m) => Eq1 (WriterT w m) where eq1 = (==)
-instance (Ord w, Ord1 m) => Ord1 (WriterT w m) where compare1 = compare
-instance (Read w, Read1 m) => Read1 (WriterT w m) where readsPrec1 = readsPrec
-instance (Show w, Show1 m) => Show1 (WriterT w m) where showsPrec1 = showsPrec
 
 -- | Extract the output from a writer computation.
 --
@@ -220,12 +201,14 @@ censor f m = WriterT $ do
     return (a, f w)
 
 -- | Lift a @callCC@ operation to the new monad.
-liftCallCC :: (Monoid w) => CallCC m (a,w) (b,w) -> CallCC (WriterT w m) a b
+liftCallCC :: (Monoid w) => ((((a,w) -> m (b,w)) -> m (a,w)) -> m (a,w)) ->
+    ((a -> WriterT w m b) -> WriterT w m a) -> WriterT w m a
 liftCallCC callCC f = WriterT $
     callCC $ \ c ->
     runWriterT (f (\ a -> WriterT $ c (a, mempty)))
 
 -- | Lift a @catchE@ operation to the new monad.
-liftCatch :: Catch e m (a,w) -> Catch e (WriterT w m) a
+liftCatch :: (m (a,w) -> (e -> m (a,w)) -> m (a,w)) ->
+    WriterT w m a -> (e -> WriterT w m a) -> WriterT w m a
 liftCatch catchE m h =
     WriterT $ runWriterT m `catchE` \ e -> runWriterT (h e)
