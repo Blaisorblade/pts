@@ -136,7 +136,8 @@ instance (Monoid w, Monad m) => Monad (WriterT w m) where
     m >>= k  = WriterT $ do
         (a, w)  <- runWriterT m
         (b, w') <- runWriterT (k a)
-        return (b, w `mappend` w')
+        let w'' = w `mappend` w'
+        return $ w'' `seq` (b, w'')
     fail msg = WriterT $ fail msg
 
 instance (Monoid w, MonadPlus m) => MonadPlus (WriterT w m) where
