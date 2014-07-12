@@ -34,8 +34,13 @@ data Position
 instance ErrorList PTSError where
   listMsg msg = pure (Error empty (pure msg) empty empty)
 
-annotateError p' e' m' c' = annotate (map update) where
-  update (Error p e m c) = Error (p <|> p') (e <|> e') (m <|> m') (c <|> c')
+--annotateError p' e' m' c' = annotate (map update) where
+annotateError
+  :: Maybe Position
+     -> Maybe String -> [String] -> Maybe [String] -> a -> a
+
+annotateError p' e' m' c' = id where
+--  update (Error p e m c) = Error (p <|> p') (e <|> e') (m <|> m') (c <|> c')
 
 annotatePos p = annotateError (pure p) empty empty empty
 annotateErr e = annotateError empty (pure e) empty empty

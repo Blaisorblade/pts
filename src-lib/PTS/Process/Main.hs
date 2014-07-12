@@ -40,12 +40,15 @@ runMainErrors act = do
 runMainState act = evalStateT act []
 
 processJobs jobs = do
-  success <- runMainState $ runMainErrors $ mapM_ processJob jobs
+  runMainState {- $ runMainErrors -} $ mapM_ processJob jobs
+  {-success <-
   if success
     then exitSuccess
     else exitFailure
+  -}
 
-processJob :: (Functor m, MonadIO m, MonadErrors [PTSError] m, MonadState [(Name, Binding M)] m) => (Options, FilePath) -> m ()
+--MonadErrors [PTSError] m,
+processJob :: (Functor m, MonadIO m, MonadState [(Name, Binding M)] m) => (Options, FilePath) -> m ()
 processJob (opt, file) = do
   let path = optPath opt
   file <- liftIO (findFile path file) >>= maybe (fail ("file not found: " ++ file)) return

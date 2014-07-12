@@ -132,7 +132,8 @@ msgNotSame context info1 info2 s t s' t'
         sep [text "Type of" <+> info1 <> text ":", nest 2 (text s'')] $$
         sep [text "Type of" <+> info2 <> text ":", nest 2 (text t'')])
 
-normalizeToInt :: (MonadLog m, Functor m, MonadEnvironment Name (Binding M) m, MonadReader Options m, MonadErrors Errors m) => TypedTerm -> TypedTerm -> Doc -> Doc -> m TypedTerm
+-- , MonadErrors Errors m
+normalizeToInt :: (MonadLog m, Functor m, MonadEnvironment Name (Binding M) m, MonadReader Options m) => TypedTerm -> TypedTerm -> Doc -> Doc -> m TypedTerm
 normalizeToInt t' t context info = do
   let stripT' = strip t'
   env <- getEnvironment
@@ -161,7 +162,8 @@ msgNotPi context info t t'
     sep [info <> text ":", nest 2 (pretty 0 t)] $$
     sep [text "Type of" <+> info <> text ":", nest 2 (pretty 0 t')])
 
-typecheck :: (MonadEnvironment Name (Binding M) m, MonadReader Options m, MonadErrors Errors m, Functor m, MonadLog m) => Term -> m TypedTerm
+--MonadErrors Errors m,
+typecheck :: (MonadEnvironment Name (Binding M) m, MonadReader Options m, Functor m, MonadLog m) => Term -> m TypedTerm
 --typecheck p d ctx t | mytrace d ctx t = undefined
 --
 prettyRelations pts s1 s2 =

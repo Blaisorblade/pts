@@ -134,7 +134,8 @@ mkTypedPos p t     =  MkTypedTerm (Pos p t) (typeOf t)
 
 handlePos f p t = annotatePos p $ mkPos p <$> f t
 
-typedHandlePos f p t = annotatePos p $ mkTypedPos p <$> f t
+typedHandlePos f p t = f t
+--typedHandlePos f p t = annotatePos p $ mkTypedPos p <$> f t
 
 infixl 2 >>>
 (>>>) = flip (.)

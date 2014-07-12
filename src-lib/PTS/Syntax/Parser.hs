@@ -5,7 +5,7 @@ import Prelude hiding (abs, pi, elem, notElem, const, mod)
 
 import Control.Applicative hiding (many, Const, optional)
 import Control.Monad
-import Control.Monad.Errors.Class
+--import Control.Monad.Errors.Class
 import Control.Monad.Reader
 
 import Data.Char
@@ -237,7 +237,7 @@ formatError expectedName src err
 
 parseInternal parser file text = do
   case parse (skipSpace *> parser <* eof) file text of
-    Left e -> throwError . pure . formatError file text $ e
+    --Left e -> throwError . pure . formatError file text $ e
     Right r -> return r
 
 parseStmt = parseInternal stmt

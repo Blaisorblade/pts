@@ -4,12 +4,16 @@ module PTS.Process.File where
 import Control.Monad (unless)
 import Control.Monad.Assertions (MonadAssertions (assert))
 import Control.Monad.Environment (runEnvironmentT)
-import Control.Monad.Errors
+--import Control.Monad.Errors (runErrorsT, MonadErrors)
 import Control.Monad.Reader (MonadReader (local), runReaderT, asks)
 import Control.Monad.State (MonadState, get, put, modify, evalStateT)
 import Control.Monad.Trans (MonadIO (liftIO))
 import Control.Monad.Log (MonadLog, runConsoleLogT)
 import Control.Monad.Writer (execWriterT, tell)
+
+import Data.Monoid
+import Control.Monad.Writer.Class
+import Control.Monad.Environment
 
 import Data.Monoid (mempty)
 
@@ -29,15 +33,18 @@ import Text.PrettyPrint.HughesPJ
 deliterateLine ('>' : ' ' : line) = ' ' : ' ' : line
 deliterateLine _                  = ""
 
+recover _ f = f
+
 deliterate text = do
   flag <- asks optLiterate
   if flag then return . unlines . map deliterateLine . lines $ text
           else return text
 
 runProcessFile action state opt =
-  evalStateT (runErrorsT (runReaderT (runConsoleLogT action (optDebugType opt)) opt)) state 
+  evalStateT( {- runErrorsT -} (runReaderT (runConsoleLogT action (optDebugType opt)) opt)) state
 
-processFile :: (Functor m, MonadErrors [PTSError] m, MonadReader Options m, MonadState [(Name, Binding M)] m, MonadIO m, MonadLog m, MonadAssertions m) => FilePath -> m (Maybe (Module M))
+-- MonadErrors [PTSError] m,
+processFile :: (Functor m, MonadReader Options m, MonadState [(Name, Binding M)] m, MonadIO m, MonadLog m, MonadAssertions m) => FilePath -> m (Maybe (Module M))
 processFile file = do
   outputLine $ "process file " ++ file
   text <- liftIO (readFile file)
@@ -48,9 +55,25 @@ processFile file = do
     name <- maybeName
     return (Module imports name contents))
 
+processStmts
+  :: (Functor m, Monoid t1, MonadIO m,
+      MonadWriter (t1, [(Name, (Value M, TypedTerm))]) m,
+      --MonadErrors [PTSError] m,
+      MonadReader Options m,
+      MonadState (Env Name (Value M, TypedTerm)) m, MonadLog m,
+      MonadAssertions m) =>
+     (t, [Stmt]) -> m ()
 processStmts (text, stmts) = do
-  annotateCode text $ mapM_ processStmt stmts
+  {- annotateCode text $ -} mapM_ processStmt stmts
 
+processStmt
+  :: (Functor m, Monoid t1, MonadIO m,
+      MonadWriter (t1, [(Name, (Value M, TypedTerm))]) m,
+      --MonadErrors [PTSError] m,
+      MonadReader Options m,
+      MonadState (Env Name (Value M, TypedTerm)) m, MonadLog m,
+      MonadAssertions m) =>
+     Stmt -> m ()
 processStmt (StmtPos p s) = annotatePos p $ processStmt s
 
 processStmt (Term t) = recover () $ do
