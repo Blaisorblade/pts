@@ -5,7 +5,6 @@ module PTS.Syntax.Names
   , NamesMap
   , freshvarl
   , freshvarlMap
-  , envToNamesMap
   , ModuleName (ModuleName)
   , parts
   , Eval
@@ -95,8 +94,8 @@ rawName (IndexName text _) = text
 getIdx (PlainName _) = -1
 getIdx (IndexName _ idx) = idx
 
-envToNamesMap :: [(Name, a)] -> NamesMap
-envToNamesMap = Map.fromListWith max . map (\(name, _) -> (rawName name, getIdx name))
+envToNamesMap :: [Name] -> NamesMap
+envToNamesMap = Map.fromListWith max . map (\name -> (rawName name, getIdx name))
 
 fresh :: Name -> Eval Name
 fresh n = do
@@ -108,5 +107,5 @@ fresh n = do
 newtype Eval a = Eval (State NamesMap a)
   deriving (Functor, Monad, MonadState NamesMap)
 
-runEval :: NamesMap -> Eval a -> a
-runEval names (Eval p) = evalState p names
+runEval :: [Name] -> Eval a -> a
+runEval names (Eval p) = evalState p (envToNamesMap names)
