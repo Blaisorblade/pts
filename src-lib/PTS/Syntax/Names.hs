@@ -68,13 +68,13 @@ type NamesMap = Map.Map String Int
 -- Merge with fresh, this is just a state monad.
 freshvarlMap :: NamesMap -> Name -> (Name, NamesMap)
 freshvarlMap names n =
-  case name `Map.lookup` names of
-    Nothing -> (n, Map.insert name (getIdx n) names)
+  case raw `Map.lookup` names of
+    Nothing -> (n, Map.insert raw (getIdx n) names)
     Just idx ->
       let newIdx = idx + 1 in
-        (IndexName name newIdx, Map.insert name newIdx names)
+        (IndexName raw newIdx, Map.insert raw newIdx names)
     where
-      name = rawName n
+      raw = rawName n
 
 rawName (PlainName text) = text
 rawName (IndexName text _) = text
