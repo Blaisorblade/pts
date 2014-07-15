@@ -2,7 +2,10 @@
 module PTS.Syntax.Names
   ( Name (PlainName, IndexName, MetaName)
   , Names
+  , NamesMap
   , freshvarl
+  , freshvarlMap
+  , envToNamesMap
   , ModuleName (ModuleName)
   , parts
   ) where
@@ -10,6 +13,7 @@ module PTS.Syntax.Names
 import Data.Char (isAlphaNum, isDigit, isLetter, isLower)
 import Data.Data (Data)
 import Data.Set (Set, member)
+import qualified Data.Map as Map
 import Data.Typeable (Typeable)
 
 data ModuleName
@@ -57,3 +61,26 @@ freshvarl xs x
   =  if x `member` xs
      then freshvarl xs (nextIndex x)
      else x
+
+-- Map name to its current max index.
+type NamesMap = Map.Map String Int
+
+-- Merge with fresh, this is just a state monad.
+freshvarlMap :: NamesMap -> Name -> (Name, NamesMap)
+freshvarlMap names n =
+  case name `Map.lookup` names of
+    Nothing -> (n, Map.insert name (getIdx n) names)
+    Just idx ->
+      let newIdx = idx + 1 in
+        (IndexName name newIdx, Map.insert name newIdx names)
+    where
+      name = rawName n
+
+rawName (PlainName text) = text
+rawName (IndexName text _) = text
+
+getIdx (PlainName _) = -1
+getIdx (IndexName _ idx) = idx
+
+envToNamesMap :: [(Name, a)] -> NamesMap
+envToNamesMap = Map.fromList . map (\(name, _) -> (rawName name, getIdx name))
