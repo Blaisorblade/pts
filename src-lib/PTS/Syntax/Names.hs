@@ -75,6 +75,19 @@ freshvarlMap names n =
         (IndexName raw newIdx, Map.insert raw newIdx names)
     where
       raw = rawName n
+  {-
+  (if newIdx == oldIdx
+    then n
+    else IndexName raw newIdx
+  , newNames)
+    where
+      raw = rawName n
+      oldIdx = getIdx n
+      updateKey _ Nothing = oldIdx
+      updateKey _ (Just idx) = idx + 1
+      -- XXX That's updateLookupWithKey's API: the function is only run if the element is there!
+      (Just newIdx, newNames) = Map.updateLookupWithKey ((Just .) . updateKey) raw names
+      -}
 
 rawName (PlainName text) = text
 rawName (IndexName text _) = text
