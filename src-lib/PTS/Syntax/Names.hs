@@ -96,4 +96,4 @@ getIdx (PlainName _) = -1
 getIdx (IndexName _ idx) = idx
 
 envToNamesMap :: [(Name, a)] -> NamesMap
-envToNamesMap = Map.fromList . map (\(name, _) -> (rawName name, getIdx name))
+envToNamesMap = Map.fromListWith max . map (\(name, _) -> (rawName name, getIdx name))
