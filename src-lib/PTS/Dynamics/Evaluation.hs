@@ -14,11 +14,13 @@ import PTS.Syntax.Names
 
 type Env m = [(Name, Value m)]
 
+runEvalEnv = runEval . map fst
+
 dropTypes :: Bindings m -> Env m
 dropTypes = map (\(x, (_, y, z)) -> (x, y))
 
 equivTerm :: Bindings Eval -> Term -> Term -> Bool
-equivTerm env' t1 t2 = runEval (envToNamesMap env) $ do
+equivTerm env' t1 t2 = runEvalEnv env $ do
   v1 <- eval t1 env
   v2 <- eval t2 env
   equiv v1 v2
@@ -63,7 +65,7 @@ equiv _ _ = do
   return False
 
 nbe :: Bindings Eval -> Term -> Term
-nbe env' e = runEval (envToNamesMap env) $ do
+nbe env' e = runEvalEnv env $ do
   v   <- eval e env
   e'  <- reify v
   return e'
@@ -103,7 +105,7 @@ reify (ResidualApp v1 v2) = do
   return (mkApp e1 e2)
 
 evalTerm :: Bindings Eval -> Term -> Value Eval
-evalTerm env' t = runEval (envToNamesMap env) $ do
+evalTerm env' t = runEvalEnv env $ do
   eval t env
  where env = dropTypes env'
 
