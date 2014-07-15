@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable #-}
 module PTS.Syntax.Names
   ( Name (PlainName, IndexName, MetaName)
   , Names
@@ -8,7 +8,12 @@ module PTS.Syntax.Names
   , envToNamesMap
   , ModuleName (ModuleName)
   , parts
+  , Eval
+  , runEval
+  , fresh
   ) where
+
+import Control.Monad.State
 
 import Data.Char (isAlphaNum, isDigit, isLetter, isLower)
 import Data.Data (Data)
@@ -92,3 +97,16 @@ getIdx (IndexName _ idx) = idx
 
 envToNamesMap :: [(Name, a)] -> NamesMap
 envToNamesMap = Map.fromListWith max . map (\(name, _) -> (rawName name, getIdx name))
+
+fresh :: Name -> Eval Name
+fresh n = do
+  ns <- get
+  let (n', ns') = freshvarlMap ns n
+  put ns'
+  return n'
+
+newtype Eval a = Eval (State NamesMap a)
+  deriving (Functor, Monad, MonadState NamesMap)
+
+runEval :: NamesMap -> Eval a -> a
+runEval names (Eval p) = evalState p names

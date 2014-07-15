@@ -17,3 +17,4 @@ import PTS.Dynamics.Evaluation
 import PTS.Dynamics.Module
 import PTS.Dynamics.Normalisation
 import PTS.Dynamics.Value
+import PTS.Syntax.Names (Eval)

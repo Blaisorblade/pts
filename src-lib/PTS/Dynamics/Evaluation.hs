@@ -2,7 +2,6 @@
 module PTS.Dynamics.Evaluation where
 
 import Control.Applicative hiding (Const)
-import Control.Monad.State
 
 import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
@@ -17,12 +16,6 @@ type Env m = [(Name, Value m)]
 
 dropTypes :: Bindings m -> Env m
 dropTypes = map (\(x, (_, y, z)) -> (x, y))
-
-newtype Eval a = Eval (State NamesMap a)
-  deriving (Functor, Monad, MonadState NamesMap)
-
-runEval :: NamesMap -> Eval a -> a
-runEval names (Eval p) = evalState p names
 
 equivTerm :: Bindings Eval -> Term -> Term -> Bool
 equivTerm env' t1 t2 = runEval (envToNamesMap env) $ do
@@ -75,13 +68,6 @@ nbe env' e = runEval (envToNamesMap env) $ do
   e'  <- reify v
   return e'
  where env = dropTypes env'
-
-fresh :: Name -> Eval Name
-fresh n = do
-  ns <- get
-  let (n', ns') = freshvarlMap ns n
-  put ns'
-  return n'
 
 reify :: Value Eval -> Eval Term
 reify (Function n v1 (ValueFunction f)) = do
