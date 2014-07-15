@@ -31,8 +31,16 @@ data Name
   = PlainName String
   | IndexName String Int
   | MetaName String
-  | NumberName Int
+  | NumberName Int HiddenName
   deriving (Eq, Ord, Data, Typeable)
+
+-- Store a name but avoids using it for comparison
+newtype HiddenName = HiddenName Name
+  deriving (Data, Typeable)
+instance Eq HiddenName where
+  (==) = const . const True
+instance Ord HiddenName where
+  compare = const . const EQ
 
 type Names = Set Name
 
@@ -40,7 +48,7 @@ instance Show Name where
   showsPrec _ (PlainName text) = showString text
   showsPrec _ (IndexName text i) = showString text . shows i
   showsPrec _ (MetaName text) = showChar '$' . showString text
-  showsPrec _ (NumberName i) = showString "x" . shows i
+  showsPrec _ (NumberName i (HiddenName n)) = shows n . showString "#" . shows i
 
 instance Read Name where
   readsPrec _ (c:cs) | isLetter c = [plainName [c] cs] where
@@ -61,7 +69,7 @@ instance Read Name where
 nextIndex :: Name -> Name
 nextIndex (PlainName text) = IndexName text 0
 nextIndex (IndexName text index) = IndexName text (index + 1)
-nextIndex (NumberName index) = NumberName (index + 1)
+nextIndex (NumberName index n) = NumberName (index + 1) n
 
 freshvarl :: Names -> Name -> Name
 freshvarl xs x
