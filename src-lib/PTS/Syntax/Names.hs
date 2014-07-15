@@ -2,9 +2,7 @@
 module PTS.Syntax.Names
   ( Name (PlainName, IndexName, MetaName)
   , Names
-  , NamesMap
   , freshvarl
-  , freshvarlMap
   , ModuleName (ModuleName)
   , parts
   , Eval
@@ -77,48 +75,18 @@ freshvarl xs x
      then freshvarl xs (nextIndex x)
      else x
 
--- XXX NumberNames are not handled below here yet.
-
--- Map name to its current max index.
-type NamesMap = Map.Map String Int
-
--- Merge with fresh, this is just a state monad.
-freshvarlMap :: NamesMap -> Name -> (Name, NamesMap)
-freshvarlMap names n =
-  (case oldLookup of
-     Nothing -> n
-     Just idx ->
-       IndexName raw $
-                 -- Here we reupdate the index, because insertLookupWithKey
-                 -- returns the old content. However, that's still cheap,
-                 -- especially compared to doing a new lookup.
-                 transformIdx idx
-  , newNames)
-    where
-      raw = rawName n
-      oldIdx = getIdx n
-      transformIdx = (+1)
-      updateVal key badReplacementValue oldValue = transformIdx oldValue
-      (oldLookup, newNames) = Map.insertLookupWithKey updateVal raw oldIdx names
-
-rawName (PlainName text) = text
-rawName (IndexName text _) = text
-
-getIdx (PlainName _) = -1
-getIdx (IndexName _ idx) = idx
-
-envToNamesMap :: [Name] -> NamesMap
-envToNamesMap = Map.fromListWith max . map (\name -> (rawName name, getIdx name))
-
 fresh :: Name -> Eval Name
 fresh n = do
-  ns <- get
-  let (n', ns') = freshvarlMap ns n
-  put ns'
-  return n'
+  idx <- get
+  put (idx + 1)
+  return $ NumberName idx (HiddenName (getBase n))
 
-newtype Eval a = Eval (State NamesMap a)
-  deriving (Functor, Monad, MonadState NamesMap)
+getBase (NumberName _ (HiddenName n)) = n
+getBase n = n
+
+newtype Eval a = Eval (State Int a)
+  deriving (Functor, Monad, MonadState Int)
 
 runEval :: [Name] -> Eval a -> a
-runEval names (Eval p) = evalState p (envToNamesMap names)
+runEval names (Eval p) = evalState p 0
+-- 0 as init state didn't work so well, it seems (length names) didn't either.
