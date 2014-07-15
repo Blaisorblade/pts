@@ -31,6 +31,7 @@ data Name
   = PlainName String
   | IndexName String Int
   | MetaName String
+  | NumberName Int
   deriving (Eq, Ord, Data, Typeable)
 
 type Names = Set Name
@@ -39,6 +40,7 @@ instance Show Name where
   showsPrec _ (PlainName text) = showString text
   showsPrec _ (IndexName text i) = showString text . shows i
   showsPrec _ (MetaName text) = showChar '$' . showString text
+  showsPrec _ (NumberName i) = showString "x" . shows i
 
 instance Read Name where
   readsPrec _ (c:cs) | isLetter c = [plainName [c] cs] where
@@ -59,12 +61,15 @@ instance Read Name where
 nextIndex :: Name -> Name
 nextIndex (PlainName text) = IndexName text 0
 nextIndex (IndexName text index) = IndexName text (index + 1)
+nextIndex (NumberName index) = NumberName (index + 1)
 
 freshvarl :: Names -> Name -> Name
 freshvarl xs x
   =  if x `member` xs
      then freshvarl xs (nextIndex x)
      else x
+
+-- XXX NumberNames are not handled below here yet.
 
 -- Map name to its current max index.
 type NamesMap = Map.Map String Int
