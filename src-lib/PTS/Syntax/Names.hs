@@ -81,18 +81,17 @@ idx :: IORef Int
 idx = unsafePerformIO $ newIORef 0
 {-# NOINLINE idx #-}
 
-getAndIncIdx :: Int
+getAndIncIdx :: IO Int
 getAndIncIdx =
-  unsafePerformIO $
-    do
-      x <- readIORef idx
-      writeIORef idx $ x + 1
-      return x
+  do
+    x <- readIORef idx
+    writeIORef idx $ x + 1
+    return x
 {-# NOINLINE getAndIncIdx #-}
 
 fresh :: Name -> Name
 fresh n =
-  NumberName getAndIncIdx (HiddenName (getBase n))
+  NumberName (unsafePerformIO $ getAndIncIdx) (HiddenName (getBase n))
 {-# NOINLINE fresh #-}
 
 getBase (NumberName _ (HiddenName n)) = n
