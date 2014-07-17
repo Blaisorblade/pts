@@ -10,7 +10,7 @@ import Language.Haskell.TH.Quote
 import PTS.Error (Position (..))
 import PTS.Instances
 import PTS.Syntax
-import PTS.Syntax.Names (Name (PlainName, IndexName, MetaName))
+import PTS.Syntax.Names (Name (..), HiddenName (..))
 import PTS.Syntax.Term (Term (MkTerm))
 
 pts  :: QuasiQuoter
@@ -85,6 +85,10 @@ instance Lift Name where
   lift (PlainName  c s)    = con 'PlainName [lift c, lift s]
   lift (IndexName  i c s)  = con 'IndexName [lift i, lift c, lift s]
   lift (MetaName s)      = var (TH.mkName s)
+  lift (NumberName i hiddenName) = con 'NumberName [lift i, lift hiddenName]
+
+instance Lift HiddenName where
+  lift (HiddenName n) = con 'HiddenName [lift n]
 
 instance Lift Term where
   lift (MkTerm (Int     n))              =  con 'MkTerm  [con 'Int     [lift n]]
