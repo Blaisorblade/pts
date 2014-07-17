@@ -61,6 +61,7 @@ Library
                        PTS.Syntax.Diff
                        PTS.Syntax.File
                        PTS.Syntax.Names
+                       PTS.Syntax.FreshNames
                        PTS.Syntax.Parser
                        PTS.Syntax.Pretty
                        PTS.Syntax.Statement

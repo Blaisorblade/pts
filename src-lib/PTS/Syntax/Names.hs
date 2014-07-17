@@ -1,14 +1,14 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable #-}
-{-# OPTIONS -fno-cse -fno-full-laziness #-}
 module PTS.Syntax.Names
-  ( Name (PlainName, IndexName, MetaName)
+  ( Name (PlainName, IndexName, MetaName, NumberName)
+  , HiddenName (..)
+  , getBaseName
   , Names
   , freshvarl
   , ModuleName (ModuleName)
   , parts
   , Eval
   , runEval
-  , fresh
   ) where
 
 import Control.Monad.Identity
@@ -18,8 +18,6 @@ import Data.Data (Data)
 import Data.Set (Set, member)
 import qualified Data.Map as Map
 import Data.Typeable (Typeable)
-import Data.IORef
-import System.IO.Unsafe (unsafePerformIO)
 
 data ModuleName
   =  ModuleName [String]
@@ -78,24 +76,8 @@ freshvarl xs x
      then freshvarl xs (nextIndex x)
      else x
 
-idx :: IORef Int
-idx = unsafePerformIO $ newIORef 0
-{-# NOINLINE idx #-}
-
-getAndIncIdx :: IO Int
-getAndIncIdx =
-  do
-    x <- readIORef idx
-    writeIORef idx $ x + 1
-    return x
-
-fresh :: Name -> Name
-fresh n =
-  NumberName (unsafePerformIO $ getAndIncIdx) (HiddenName (getBase n))
-{-# NOINLINE fresh #-}
-
-getBase (NumberName _ (HiddenName n)) = n
-getBase n = n
+getBaseName (NumberName _ (HiddenName n)) = n
+getBaseName n = n
 
 runEval _ = runIdentity
 type Eval = Identity

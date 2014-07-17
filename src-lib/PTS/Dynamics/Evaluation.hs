@@ -10,7 +10,7 @@ import qualified Data.Map as Map
 import PTS.Dynamics.Binding
 import PTS.Dynamics.Value
 import PTS.Syntax
-import PTS.Syntax.Names
+import PTS.Syntax.FreshNames
 
 type Env m = [(Name, Value m)]
 
