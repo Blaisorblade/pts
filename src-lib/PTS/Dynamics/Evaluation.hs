@@ -2,7 +2,6 @@
 module PTS.Dynamics.Evaluation where
 
 import Control.Applicative hiding (Const)
-import Control.Monad.State
 
 import Data.Maybe (fromMaybe)
 import qualified Data.Set as Set
@@ -15,17 +14,13 @@ import PTS.Syntax.Names
 
 type Env m = [(Name, Value m)]
 
+runEvalEnv = runEval . map fst
+
 dropTypes :: Bindings m -> Env m
 dropTypes = map (\(x, (_, y, z)) -> (x, y))
 
-newtype Eval a = Eval (State NamesMap a)
-  deriving (Functor, Monad, MonadState NamesMap)
-
-runEval :: NamesMap -> Eval a -> a
-runEval names (Eval p) = evalState p names
-
 equivTerm :: Bindings Eval -> Term -> Term -> Bool
-equivTerm env' t1 t2 = runEval (envToNamesMap env) $ do
+equivTerm env' t1 t2 = runEvalEnv env $ do
   v1 <- eval t1 env
   v2 <- eval t2 env
   equiv v1 v2
@@ -70,18 +65,11 @@ equiv _ _ = do
   return False
 
 nbe :: Bindings Eval -> Term -> Term
-nbe env' e = runEval (envToNamesMap env) $ do
+nbe env' e = runEvalEnv env $ do
   v   <- eval e env
   e'  <- reify v
   return e'
  where env = dropTypes env'
-
-fresh :: Name -> Eval Name
-fresh n = do
-  ns <- get
-  let (n', ns') = freshvarlMap ns n
-  put ns'
-  return n'
 
 reify :: Value Eval -> Eval Term
 reify (Function n v1 (ValueFunction f)) = do
@@ -117,7 +105,7 @@ reify (ResidualApp v1 v2) = do
   return (mkApp e1 e2)
 
 evalTerm :: Bindings Eval -> Term -> Value Eval
-evalTerm env' t = runEval (envToNamesMap env) $ do
+evalTerm env' t = runEvalEnv env $ do
   eval t env
  where env = dropTypes env'
 
