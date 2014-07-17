@@ -17,7 +17,6 @@ module PTS.Syntax.Term
   , mkPos
   , mkUnquote
   , mkInfer
-  , freshvarl
   , handlePos
   , typedHandlePos
   , evalOp
@@ -32,7 +31,7 @@ import Data.Typeable (Typeable)
 
 import PTS.Error
 import PTS.Syntax.Constants (C(C))
-import PTS.Syntax.Names (Name, Names, freshvarl)
+import PTS.Syntax.Names (Name, Names)
 
 
 -- Syntax
