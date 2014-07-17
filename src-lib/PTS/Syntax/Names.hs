@@ -10,13 +10,15 @@ module PTS.Syntax.Names
   , fresh
   ) where
 
-import Control.Monad.State
+import Control.Monad.Identity
 
 import Data.Char (isAlphaNum, isDigit, isLetter, isLower)
 import Data.Data (Data)
 import Data.Set (Set, member)
 import qualified Data.Map as Map
 import Data.Typeable (Typeable)
+import Data.IORef
+import System.IO.Unsafe (unsafePerformIO)
 
 data ModuleName
   =  ModuleName [String]
@@ -75,18 +77,25 @@ freshvarl xs x
      then freshvarl xs (nextIndex x)
      else x
 
+idx :: IORef Int
+idx = unsafePerformIO $ newIORef 0
+{-# NOINLINE idx #-}
+
+getAndIncIdx :: () -> Int
+getAndIncIdx () =
+  unsafePerformIO $
+    do
+      x <- readIORef idx
+      writeIORef idx $ x + 1
+      return x
+{-# NOINLINE getAndIncIdx #-}
+
 fresh :: Name -> Eval Name
 fresh n = do
-  idx <- get
-  put (idx + 1)
-  return $ NumberName idx (HiddenName (getBase n))
+  return $ NumberName (getAndIncIdx ()) (HiddenName (getBase n))
 
 getBase (NumberName _ (HiddenName n)) = n
 getBase n = n
 
-newtype Eval a = Eval (State Int a)
-  deriving (Functor, Monad, MonadState Int)
-
-runEval :: [Name] -> Eval a -> a
-runEval names (Eval p) = evalState p 0
--- 0 as init state didn't work so well, it seems (length names) didn't either.
+type Eval = Identity
+runEval _ = runIdentity
