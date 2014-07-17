@@ -1,4 +1,5 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable #-}
+{-# OPTIONS -fno-cse -fno-full-laziness #-}
 module PTS.Syntax.Names
   ( Name (PlainName, IndexName, MetaName)
   , Names
