@@ -90,13 +90,13 @@ getAndIncIdx =
       return x
 {-# NOINLINE getAndIncIdx #-}
 
-fresh :: Name -> Eval Name
-fresh n = do
-  return $ NumberName getAndIncIdx (HiddenName (getBase n))
+fresh :: Name -> Name
+fresh n =
+  NumberName getAndIncIdx (HiddenName (getBase n))
 {-# NOINLINE fresh #-}
 
 getBase (NumberName _ (HiddenName n)) = n
 getBase n = n
 
-type Eval = Identity
 runEval _ = runIdentity
+type Eval = Identity

@@ -29,7 +29,7 @@ equivTerm env' t1 t2 = runEvalEnv env $ do
 equiv :: Value Eval -> Value Eval -> Eval Bool
 equiv (Function n v1 (ValueFunction f)) (Function _ v1' (ValueFunction f')) = do
   r1 <- equiv v1 v1'
-  n'   <- fresh n
+  let n' = fresh n
   v2   <- f   (ResidualVar n')
   v2'  <- f'  (ResidualVar n')
   r2 <- equiv v2 v2'
@@ -40,7 +40,7 @@ equiv (Constant c) (Constant c') = do
   return (c == c')
 equiv (PiType n v1 (ValueFunction f)) (PiType _ v1' (ValueFunction f')) = do
   r1   <- equiv v1 v1'
-  n'   <- fresh n
+  let n' = fresh n
   v2   <- f   (ResidualVar n')
   v2'  <- f'  (ResidualVar n')
   r2   <- equiv v2 v2'
@@ -74,7 +74,7 @@ nbe env' e = runEvalEnv env $ do
 reify :: Value Eval -> Eval Term
 reify (Function n v1 (ValueFunction f)) = do
   e1 <- reify v1
-  n' <- fresh n
+  let n' = fresh n
   v2 <- f (ResidualVar n')
   e2 <- reify v2
   return (mkLam n' e1 e2)
@@ -84,7 +84,7 @@ reify (Constant c) = do
   return (mkConst c)
 reify (PiType n v1 (ValueFunction f)) = do
   e1 <- reify v1
-  n' <- fresh n
+  let n' = fresh n
   v2 <- f (ResidualVar n')
   e2 <- reify v2
   return (mkPi n' e1 e2)
