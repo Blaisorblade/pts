@@ -76,6 +76,8 @@ Library
   -- Flags useful for heap profiling. They might be redundant with
   -- --enable-library-profiling.
   Ghc-prof-options: -fprof-auto -fno-prof-count-entries
+  -- Ghc-options: -fno-cse -fno-full-laziness
+  Ghc-options: -O0
 
   if flag(debug-typing)
     CPP-Options: -DDEBUG_TYPING
