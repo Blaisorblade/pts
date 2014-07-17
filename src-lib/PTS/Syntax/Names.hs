@@ -93,6 +93,7 @@ getAndIncIdx =
 fresh :: Name -> Eval Name
 fresh n = do
   return $ NumberName getAndIncIdx (HiddenName (getBase n))
+{-# NOINLINE fresh #-}
 
 getBase (NumberName _ (HiddenName n)) = n
 getBase n = n
