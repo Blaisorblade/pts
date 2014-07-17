@@ -88,7 +88,6 @@ getAndIncIdx =
     x <- readIORef idx
     writeIORef idx $ x + 1
     return x
-{-# NOINLINE getAndIncIdx #-}
 
 fresh :: Name -> Name
 fresh n =
