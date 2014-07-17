@@ -9,14 +9,14 @@ import qualified Data.Set as Set
 
 import PTS.Syntax.Algebra
 import PTS.Syntax.Names
+import PTS.Syntax.FreshNames
 import PTS.Syntax.Term
 
 -- substitution (generates fresh variables if needed to prevent accidental capture)
 
 typedAvoidCapture :: TypedTerm -> Name -> TypedTerm -> Name -> TypedTerm -> (Name, TypedTerm)
 typedAvoidCapture s x xt y t = (x', s') where
-  x' | x `Set.member` fvt = freshvarl fv x
-     | otherwise = x
+  x' = fresh x
 
   s' | x == x' = s
      | otherwise = typedSubst s x (MkTypedTerm (Var x') xt)
@@ -27,8 +27,7 @@ typedAvoidCapture s x xt y t = (x', s') where
 
 avoidCapture :: Term -> Name -> Name -> Term -> (Name, Term)
 avoidCapture s x y t = (x', s') where
-  x' | x `Set.member` fvt = freshvarl fv x
-     | otherwise = x
+  x' = fresh x
 
   s' | x == x' = s
      | otherwise = subst s x (mkVar x')
@@ -84,7 +83,7 @@ freshCommonVar n1 n2 b1 b2 = (n', b1', b2') where
   n' | n1 == n2 = n1
      | n1 `Set.notMember` fv2 = n1
      | n2 `Set.notMember` fv1 = n2
-     | otherwise = freshvarl (fv1 `Set.union` fv2) n1
+     | otherwise = fresh n1
 
   b1' | n' == n1 = b1
       | otherwise = subst b1 n1 (mkVar n')
