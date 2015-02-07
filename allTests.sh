@@ -14,5 +14,6 @@ $CABAL sdist
 
 dist/build/tests/tests --hide-successes --maximum-generated-tests=10000 --maximum-unsuitable-generated-tests=10000 --jxml=junit-log.xml
 
+cat dist/setup-config
 nameBase=`runhaskell src-tools/package-info.hs --package`
 $CABAL install dist/$nameBase.tar.gz --enable-tests
