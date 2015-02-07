@@ -10,7 +10,10 @@ import Distribution.Text
 import System.Environment
 
 readLocalBuildInfo :: IO LocalBuildInfo
-readLocalBuildInfo = getPersistBuildConfig "dist"
+readLocalBuildInfo = do
+  text <- readFile "dist/setup-config"
+  let body = dropWhile (/= '\n') text
+  return (read body)
 
 print :: Text a => a -> IO ()
 print x = putStrLn (display x)
