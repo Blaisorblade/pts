@@ -2,18 +2,19 @@
 [ -z "$CABAL" ] && CABAL=cabal
 
 set -e
+which cabal
 
 $CABAL clean
 $CABAL check
 
 $CABAL install --only-dependencies --enable-tests
 $CABAL configure --enable-tests
-runhaskell src-tools/package-info.hs --package
+runhaskell -- -package --ghc-arg=Cabal-1.18.1 src-tools/package-info.hs --package
 $CABAL build
 
 $CABAL sdist
 
 dist/build/tests/tests --hide-successes --maximum-generated-tests=10000 --maximum-unsuitable-generated-tests=10000 --jxml=junit-log.xml
 
-nameBase=`runhaskell src-tools/package-info.hs --package`
+nameBase=`runhaskell -- -package --ghc-arg=Cabal-1.18.1 src-tools/package-info.hs --package`
 $CABAL install dist/$nameBase.tar.gz --enable-tests
