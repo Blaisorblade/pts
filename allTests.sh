@@ -18,5 +18,5 @@ $CABAL sdist
 
 dist/build/tests/tests --hide-successes --maximum-generated-tests=10000 --maximum-unsuitable-generated-tests=10000 --jxml=junit-log.xml
 
-nameBase=`runhaskell -- -package --ghc-arg=Cabal-1.18.1 src-tools/package-info.hs --package`
+nameBase=`runhaskell -- -package --ghc-arg=Cabal-1.18.1.4 src-tools/package-info.hs --package`
 $CABAL install dist/$nameBase.tar.gz --enable-tests
