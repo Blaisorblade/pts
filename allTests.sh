@@ -9,6 +9,8 @@ $CABAL check
 
 $CABAL install --only-dependencies --enable-tests
 $CABAL configure --enable-tests
+ghc-pkg list
+$CABAL install Cabal-1.18.1
 runhaskell -- -package --ghc-arg=Cabal-1.18.1 src-tools/package-info.hs --package
 $CABAL build
 
